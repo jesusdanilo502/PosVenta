@@ -23,7 +23,8 @@ switch ($_GET["op"]){
                 $ext= explode(".",$_FILES["imagen"]["name"]);
                 if($_FILES['imagen']['type'] == "image/jpg" || $_FILES['imagen']['type']=="image/jpeg" || $_FILES['imagen']['type']=="image/png"  )
                 {
-                    
+                    $imagen= round(microtime(true)) . '.' .end($ext);
+                    move_uploaded_file($_FILES["imagen"]["tmp_name"], "../files/articulos/" . $imagen);
                 }
             }
 
@@ -69,7 +70,7 @@ switch ($_GET["op"]){
                 "2"=>$reg->categoria,
                 "3"=>$reg->codigo,
                 "4"=>$reg->stock,
-                "5"=>$reg->imagen,
+                "5"=>"<img src='../files/articulos/".$reg->imagen."' height='50px' width='50px >",
                 "6"=>($reg->condicion)?'<span class="label bg-green">Activado</span>':
                     '<span class="label bg-red">Desactivado</span>'
             );
@@ -82,6 +83,18 @@ switch ($_GET["op"]){
             "aaData"=>$data);
         echo json_encode($results);
 
+        break;
+
+    case "selectCategoria":
+        require_once "../modelos/Categoria.php";
+        $categoria = new Categoria();
+
+        $rspta = $categoria->select();
+
+        while ($reg = $rspta->fetch_object())
+        {
+            echo '<option value=' . $reg->idcategoria . '>' . $reg->nombre . '</option>';
+        }
         break;
 }
 ?>
